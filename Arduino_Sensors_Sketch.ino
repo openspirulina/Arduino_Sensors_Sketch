@@ -47,6 +47,7 @@ AUTHENTICATION ARDUINO
 
 *****/
 
+//Define de identity of Arduino
 const int id_arduino = 1;
 
 /****
@@ -90,7 +91,7 @@ Global variables for internal use
 File myFile;
 int fileCount = 0;
 String fileName = "";
-// RTC DS3231
+// RTC DS3231 (clock sensor)
 RTC_DS3231 rtc;
 // Initialize the network library instance:
 EthernetClient client;
@@ -145,7 +146,7 @@ void setup()
   // Comprobamos si tenemos el RTC conectado
   if (!rtc.begin())
   {
-    Serial.println("No hay un módulo RTC");
+    Serial.println("No clock working");
     while (1)
       ;
   }
@@ -168,17 +169,18 @@ void setup()
   Serial.println("Writing in file: " + fileName);
 
 
-  // Initialize DS18B20 sensors
+  // Initialize DS18B20 Temperature sensors
   if(debug)
     Serial.println("Initializing DS18B20 BUS...");
   sensorDS18B20.begin();
 
 
-  // Initialize DHT sensors
+  // Initialize DHT Temp/humidity sensors
   if(debug)
     Serial.println("Initializing DHT Sensor 1...");
   dht1.begin();
-  //Serial.println("Fallo DHT_1");
+  
+ //Serial.println("Fallo DHT_1");
   
   if(debug)
     Serial.println("Initializing DHT Sensor 2...");
@@ -317,7 +319,7 @@ void httpRequest()
 
   //Read values before send to server
   
-  // Requests aqua temperatures from oneWire Bus
+  // Requests culture temperatures from oneWire Bus
   sensorDS18B20.requestTemperatures();
   float tempSensor1 = lecturaTemperatura(0);
   float tempSensor2 = lecturaTemperatura(1);
@@ -379,3 +381,13 @@ void httpRequest()
     Serial.println("Connection Failed");
   }
 }
+
+/*Ei fran t'escric per aquí després borres o si no ho creus adequat comunciar-nos per aquí m'ho fas saber
+
+Tema làsers: simplement es obrir i agafar dades, la seqüència seria: 
+  agafar dades sensor de llum
+  1 segon
+  obrir laser
+  1 segon
+  agafar dades sensor de llum (mitjana de tres lectures amb poc espai de temps)
+  apagar làser
